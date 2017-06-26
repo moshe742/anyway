@@ -25,7 +25,7 @@ import logging
 
 mail_dir = 'inbox'
 # TODO need to create the folder on server
-detach_dir = 'static/data/pics'
+detach_dir = 'pics'
 
 
 def main(username=None, password=None, lastmail=False):
@@ -54,6 +54,10 @@ def main(username=None, password=None, lastmail=False):
         exit()
 
     file_found = False
+    if not os.path.isdir(detach_dir):
+        os.mkdir(detach_dir)
+        os.chmod(detach_dir, 0775)
+
     listdir = os.listdir(detach_dir)
 
     is_empty = len(listdir) <= 1 or not lastmail
@@ -62,6 +66,7 @@ def main(username=None, password=None, lastmail=False):
     # Iterating over all emails
     started = datetime.now()
     logging.info("Login successful! Importing files, please hold...")
+
     for msgId in data[0].split():
         typ, message_parts = imapsession.fetch(msgId, '(RFC822)')
         if typ != 'OK':
